@@ -14,8 +14,6 @@ spring:
       path: "/h2"
   profiles:
     include: null
-aws:
-  region: "us-east-1"
 entrypoint:
   sqs:
     region: "${AWS_SQS_CREDIYA_SQS_REGION}"
