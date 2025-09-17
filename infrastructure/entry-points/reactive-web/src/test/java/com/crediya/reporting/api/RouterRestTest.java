@@ -1,60 +1,45 @@
 package com.crediya.reporting.api;
 
-import org.assertj.core.api.Assertions;
+import com.crediya.common.api.handling.GlobalExceptionFilter;
+import com.crediya.reporting.api.config.ReportingPath;
+import com.crediya.reporting.model.LoanReport;
+import com.crediya.reporting.usecase.ReportingUseCase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.server.RouterFunction;
+import reactor.core.publisher.Mono;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class})
-@WebFluxTest
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 class RouterRestTest {
 
-    @Autowired
-    private WebTestClient webTestClient;
+  private ReportingUseCase useCase;
+  private WebTestClient webTestClient;
+  private ReportingPath applicationPath;
 
-    @Test
-    void testListenGETUseCase() {
-        webTestClient.get()
-                .uri("/api/usecase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
-    }
+  @BeforeEach
+  void setUp() {
+    useCase = mock(ReportingUseCase.class);
+    Handler handler = new Handler(useCase);
+    applicationPath = new ReportingPath("/api/v1/reports");
+    RouterFunction<?> routes = new RouterRest(handler, new GlobalExceptionFilter(), applicationPath)
+      .routerFunction();
+    webTestClient = WebTestClient.bindToRouterFunction(routes)
+      .build();
+  }
 
-    @Test
-    void testListenGETOtherUseCase() {
-        webTestClient.get()
-                .uri("/api/otherusercase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
-    }
+  @Test
+  void mustGetLoansReport() {
+    LoanReport loanReport = new LoanReport();
+    loanReport.setLoanReportId("report-id");
 
-    @Test
-    void testListenPOSTUseCase() {
-        webTestClient.post()
-                .uri("/api/usecase/otherpath")
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue("")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
-    }
+    when(useCase.getLoansReport()).thenReturn(Mono.just(loanReport));
+
+    webTestClient.get()
+      .uri(applicationPath.getLoansReport())
+      .exchange()
+      .expectStatus().isOk();
+  }
 }

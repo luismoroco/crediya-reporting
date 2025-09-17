@@ -1,4 +1,4 @@
-package com.crediya.reporting.dynamodb;
+package com.crediya.reporting.dynamodb.entity;
 
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;

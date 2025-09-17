@@ -1,7 +1,10 @@
 package com.crediya.reporting.sqs.listener.helper;
 
+import com.crediya.common.logging.Logger;
 import com.crediya.reporting.sqs.listener.SQSProcessor;
 import com.crediya.reporting.sqs.listener.config.SQSProperties;
+import com.crediya.reporting.usecase.ReportingUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,18 +32,26 @@ class SQSListenerTest {
     @Mock
     private SQSProperties sqsProperties;
 
+    @Mock
+    private ReportingUseCase useCase;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private Logger logger;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        var sqsProperties = new SQSProperties(
+        sqsProperties = new SQSProperties(
                 "us-east-1",
                 "http://localhost:4566",
-                "http://localhost:4566/00000000000/queueName",
+                10,
                 20,
                 30,
-                10,
-                1
+                10
         );
 
         var message = Message.builder().body("message").build();
@@ -58,7 +69,7 @@ class SQSListenerTest {
         var sqsListener = SQSListener.builder()
                 .client(asyncClient)
                 .properties(sqsProperties)
-                .processor(new SQSProcessor())
+                .processor(new SQSProcessor(useCase, objectMapper, logger))
                 .operation("operation")
                 .build();
 

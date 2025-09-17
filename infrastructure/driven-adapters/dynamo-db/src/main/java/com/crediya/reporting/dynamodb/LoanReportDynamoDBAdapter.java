@@ -1,5 +1,6 @@
 package com.crediya.reporting.dynamodb;
 
+import com.crediya.reporting.dynamodb.entity.LoanReportEntity;
 import com.crediya.reporting.dynamodb.helper.TemplateAdapterOperations;
 import com.crediya.reporting.model.LoanReport;
 import com.crediya.reporting.model.gateway.LoanReportRepository;
