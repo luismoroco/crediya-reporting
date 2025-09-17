@@ -1,8 +1,11 @@
 server:
-  port: 8080
+  port: "${PORT}"
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: "crediya-reporting"
+    version: "1.0.0"
   devtools:
     add-properties: false
   h2:
@@ -12,5 +15,23 @@ spring:
   profiles:
     include: null
 aws:
-  dynamodb:
-    endpoint: "http://localhost:8000"
+  region: "us-east-1"
+entrypoint:
+  sqs:
+    region: "${AWS_SQS_CREDIYA_SQS_REGION}"
+    queueUrl: "${AWS_SQS_CREDIYA_SQS_REPORTING_QUEUE_URL}"
+    waitTimeSeconds: 20
+    maxNumberOfMessages: 10
+    visibilityTimeoutSeconds: 10
+    numberOfThreads: 1
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:8080"
