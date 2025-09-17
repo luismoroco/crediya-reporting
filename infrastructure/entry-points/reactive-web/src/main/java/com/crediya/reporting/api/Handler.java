@@ -15,8 +15,8 @@ public class Handler {
 
     private final ReportingUseCase useCase;
 
-    public Mono<ServerResponse> listenGETUseCase(ServerRequest serverRequest) {
-       return this.useCase.getReport()
+    public Mono<ServerResponse> getLoansReport(ServerRequest serverRequest) {
+       return this.useCase.getLoansReport()
           .flatMap(dto -> ServerResponse
             .status(HttpStatus.OK)
             .contentType(MediaType.APPLICATION_JSON)

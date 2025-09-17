@@ -2,7 +2,7 @@ package com.crediya.reporting.sqs.listener;
 
 import com.crediya.common.logging.Logger;
 import com.crediya.reporting.usecase.ReportingUseCase;
-import com.crediya.reporting.usecase.dto.UpdateLoanReportDTO;
+import com.crediya.reporting.usecase.dto.UpdateLoansReportDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,8 +23,8 @@ public class SQSProcessor implements Function<Message, Mono<Void>> {
     public Mono<Void> apply(Message message) {
         this.logger.info("Message received [payload={}]", message.body());
 
-        return Mono.fromCallable(() -> this.mapper.readValue(message.body(), UpdateLoanReportDTO.class))
-          .flatMap(this.useCase::updateLoanReport)
+        return Mono.fromCallable(() -> this.mapper.readValue(message.body(), UpdateLoansReportDTO.class))
+          .flatMap(this.useCase::updateLoansReport)
           .then();
     }
 }

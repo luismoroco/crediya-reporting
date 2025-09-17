@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @ToString
-public class UpdateLoanReportDTO {
+public class UpdateLoansReportDTO {
 
   private Long applicationId;
   private Long amount;

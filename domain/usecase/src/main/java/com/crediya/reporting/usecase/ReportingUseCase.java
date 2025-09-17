@@ -4,7 +4,7 @@ import com.crediya.common.exc.NotFoundException;
 import com.crediya.common.logging.Logger;
 import com.crediya.reporting.model.LoanReport;
 import com.crediya.reporting.model.gateway.LoanReportRepository;
-import com.crediya.reporting.usecase.dto.UpdateLoanReportDTO;
+import com.crediya.reporting.usecase.dto.UpdateLoansReportDTO;
 import com.crediya.common.validation.ValidatorUtils;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -22,7 +22,7 @@ public class ReportingUseCase {
   private final LoanReportRepository repository;
   private final Logger logger;
 
-  public Mono<LoanReport> getReport() {
+  public Mono<LoanReport> getLoansReport() {
     return this.repository.getById(LOAN_REPORT_IDENTIFIER)
       .switchIfEmpty(Mono.defer(() -> {
         this.logger.error("Loan Report not found [loanReportId={}]", LOAN_REPORT_IDENTIFIER);
@@ -30,9 +30,9 @@ public class ReportingUseCase {
       }));
   }
 
-  public Mono<LoanReport> updateLoanReport(UpdateLoanReportDTO dto) {
-    return validateUpdateLoanReportDTOConstraints(dto)
-      .then(this.getReport())
+  public Mono<LoanReport> updateLoansReport(UpdateLoansReportDTO dto) {
+    return validateUpdateLoansReportDTOConstraints(dto)
+      .then(this.getLoansReport())
       .flatMap(loanReport -> {
         loanReport.setApprovedCount(loanReport.getApprovedCount() + 1);
         loanReport.setApprovedTotalAmount(loanReport.getApprovedTotalAmount() + dto.getAmount());
@@ -42,7 +42,7 @@ public class ReportingUseCase {
       .doOnError(error -> this.logger.error("Error updating loan report [args={}][error={}]", dto, error.getMessage()));
   }
 
-  public static Mono<Void> validateUpdateLoanReportDTOConstraints(UpdateLoanReportDTO dto) {
+  public static Mono<Void> validateUpdateLoansReportDTOConstraints(UpdateLoansReportDTO dto) {
     return ValidatorUtils.nonNull(AMOUNT, dto.getAmount())
       .then(ValidatorUtils.nonNull(APPLICATION_ID, dto.getApplicationId()));
   }
