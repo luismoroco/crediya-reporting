@@ -14,6 +14,11 @@ spring:
       path: "/h2"
   profiles:
     include: null
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: "${JWT_SECRET_KEY}"
 entrypoint:
   sqs:
     region: "${AWS_SQS_CREDIYA_SQS_REGION}"
